@@ -54,3 +54,12 @@ describe('binær ↔ decimal logik', () => {
     expect(scoreFor(2, 0, 45)).toBe(300);
   });
 });
+
+describe('ingen gentagelser i en runde', () => {
+  it('alle tal i en 4-bit-runde er forskellige', () => {
+    for (let run = 0; run < 200; run++) {
+      const values = makeRound(4).map((t) => t.value);
+      expect(new Set(values).size).toBe(values.length);
+    }
+  });
+});

@@ -1,4 +1,5 @@
 import type { Challenge } from '../types';
+import { createUniqueRandom } from '../../core/unique';
 
 /**
  * Pladsholder-udfordring, der viser hvordan en udfordring bruger rammen.
@@ -18,6 +19,8 @@ export const challenge: Challenge = {
     let index = 0;
     let score = 0;
     let target = 0;
+    // Samme tal må kun komme én gang pr. runde.
+    const numbers = createUniqueRandom();
 
     el.innerHTML = `
       <p class="muted">Niveau ${ctx.level}: tal fra 0 til ${max}. Spørgsmål <span data-q></span> af ${QUESTIONS_PER_ROUND}.</p>
@@ -42,7 +45,7 @@ export const challenge: Challenge = {
         return;
       }
       index++;
-      target = Math.floor(Math.random() * (max + 1));
+      target = numbers.int(0, max);
       q.textContent = String(index);
       targetEl.textContent = String(target);
       input.value = '';
