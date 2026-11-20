@@ -11,7 +11,7 @@
 @media (prefers-color-scheme: dark) {
   .hexjagt { --hj-ok: #6fd28f; --hj-warn: #f0c060; --hj-bad: #ff8a80; --hj-line: #4a4f57; }
 }
-.hexjagt h2 { margin: 0 0 0.5rem; }
+.hexjagt h2 { margin: 0 0 0.25rem; font-size: 1.2rem; }
 .hexjagt .hj-progress { font-size: 0.9rem; opacity: 0.75; margin: 0; }
 .hexjagt .hj-label { margin: 0.75rem 0 0.25rem; }
 .hexjagt .hj-number {

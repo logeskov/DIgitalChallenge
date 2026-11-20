@@ -50,7 +50,7 @@ function runConversion(root: HTMLElement, ctx: ChallengeContext): void {
       class: 'hj-input',
       autocomplete: 'off',
       spellcheck: false,
-      placeholder: `Skriv tallet i ${BASE_NAVN[task.to]}`,
+      placeholder: `Svar i ${BASE_NAVN[task.to]}`,
     });
     input.setAttribute('aria-label', `Svar i ${BASE_NAVN[task.to]}`);
     const feedback = h('p', { class: 'hj-feedback' });
@@ -260,7 +260,7 @@ export const challenge: Challenge = {
   mount(el, ctx) {
     const root = h('section', { class: 'hexjagt' });
     const title = h('h2', {
-      textContent: ctx.level === 1 ? 'Hex-jagt · Omregning' : 'Hex-jagt · Farvejagt',
+      textContent: ctx.level === 1 ? 'Omregning' : 'Farvejagt',
     });
     const body = h('div');
     root.append(title, body);
