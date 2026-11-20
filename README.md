@@ -49,6 +49,8 @@ export const challenge: Challenge = {
 };
 ```
 
-Rammen gemmer bedste resultat pr. niveau og låser næste niveau op, når spilleren får mindst 80 % af `maxScore`. Spillerens rang i topbjælken beregnes ud fra de samlede point.
+Rammen gemmer bedste resultat pr. niveau og låser næste niveau op, når spilleren får mindst 80 % af `maxScore`.
+
+**Point:** I den samlede pointsum tæller hvert niveau kun med pointene fra det seneste gennemførte forsøg (summen af `addPoints` i den runde). Prøver man igen og klarer sig dårligere, falder summen. En runde, man forlader før `finish`, tæller ikke, og de tidligere point står. Spillerens rang i topbjælken beregnes ud fra den samlede sum og kan derfor også falde.
 
 `src/challenges/pladsholder/` er en lille eksempel-udfordring, der kan fjernes, når de rigtige er på plads.
