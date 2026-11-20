@@ -37,7 +37,8 @@ export const challenge: Challenge = {
     const button = form.querySelector('button')!;
     const input = el.querySelector<HTMLInputElement>('[data-input]')!;
     const feedback = el.querySelector<HTMLElement>('[data-feedback]')!;
-    let timer: number | undefined;
+    // Efter et svar vises feedback, og knappen skifter til "Næste" (som i de andre udfordringer).
+    let answered = false;
 
     const next = () => {
       if (index >= QUESTIONS_PER_ROUND) {
@@ -49,13 +50,17 @@ export const challenge: Challenge = {
       q.textContent = String(index);
       targetEl.textContent = String(target);
       input.value = '';
-      button.disabled = false;
+      input.disabled = false;
+      answered = false;
+      button.textContent = 'Svar';
+      feedback.textContent = '';
+      feedback.className = 'feedback';
       input.focus();
     };
 
     const onSubmit = (e: Event) => {
       e.preventDefault();
-      if (button.disabled) return;
+      if (answered) return next();
       const answer = input.value.trim();
       if (!/^[01]+$/.test(answer)) {
         feedback.textContent = 'Brug kun 0 og 1.';
@@ -71,15 +76,16 @@ export const challenge: Challenge = {
         feedback.textContent = `Ikke helt. ${target} er ${target.toString(2)} i binær.`;
         feedback.className = 'feedback bad';
       }
-      button.disabled = true;
-      timer = window.setTimeout(next, 900);
+      answered = true;
+      input.disabled = true;
+      button.textContent = index < QUESTIONS_PER_ROUND ? 'Næste' : 'Se resultat';
+      button.focus();
     };
 
     form.addEventListener('submit', onSubmit);
     next();
 
     return () => {
-      window.clearTimeout(timer);
       form.removeEventListener('submit', onSubmit);
       el.innerHTML = '';
     };
