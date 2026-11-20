@@ -16,6 +16,7 @@ import {
   type Base,
   type Rgb,
 } from './logic';
+import { createUniqueRandom } from '../../core/unique';
 
 const CONVERSION_ROUNDS = 8;
 const CONVERSION_POINTS = 10;
@@ -41,9 +42,10 @@ function h<K extends keyof HTMLElementTagNameMap>(
 function runConversion(root: HTMLElement, ctx: ChallengeContext): void {
   let round = 0;
   let score = 0;
+  const numbers = createUniqueRandom();
 
   const showRound = () => {
-    const task = makeConversionTask(round);
+    const task = makeConversionTask(round, Math.random, numbers);
     let firstTry = true;
 
     const input = h('input', {
@@ -125,6 +127,7 @@ function runConversion(root: HTMLElement, ctx: ChallengeContext): void {
 function runColors(root: HTMLElement, ctx: ChallengeContext): void {
   let round = 0;
   let score = 0;
+  const colors = createUniqueRandom();
 
   const swatch = (c: Rgb | null, label: string) =>
     h(
@@ -135,7 +138,7 @@ function runColors(root: HTMLElement, ctx: ChallengeContext): void {
     );
 
   const showRound = () => {
-    const target = makeTargetColor(round);
+    const target = colors.pick(() => makeTargetColor(round), rgbToHex);
     let attempts = 0;
     let best = 0;
 

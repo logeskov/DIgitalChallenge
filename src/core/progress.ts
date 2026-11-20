@@ -9,6 +9,8 @@ export interface LevelRecord {
   bestScore: number;
   maxScore: number;
   completed: boolean;
+  /** Point fra seneste gennemførte forsøg. Det er dem, der tæller i den samlede pointsum. */
+  lastPoints?: number;
 }
 
 export interface ChallengeProgress {
@@ -19,7 +21,6 @@ export interface ChallengeProgress {
 }
 
 export interface ProgressState {
-  totalPoints: number;
   challenges: Record<string, ChallengeProgress>;
 }
 
@@ -27,7 +28,7 @@ export interface ProgressState {
 export type KeyValueStore = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
 function emptyState(): ProgressState {
-  return { totalPoints: 0, challenges: {} };
+  return { challenges: {} };
 }
 
 function emptyChallenge(): ChallengeProgress {
@@ -47,9 +48,10 @@ export class ProgressStore {
     try {
       const raw = this.store?.getItem(STORAGE_KEY);
       if (!raw) return emptyState();
+      // Ældre gemte data havde et løbende totalPoints-felt. Det ignoreres nu, fordi
+      // summen beregnes ud fra seneste forsøg pr. niveau. Rekorder og oplåsning bevares.
       const parsed = JSON.parse(raw) as Partial<ProgressState>;
       return {
-        totalPoints: typeof parsed.totalPoints === 'number' ? parsed.totalPoints : 0,
         challenges: parsed.challenges && typeof parsed.challenges === 'object' ? parsed.challenges : {},
       };
     } catch {
@@ -75,19 +77,26 @@ export class ProgressStore {
     return () => this.listeners.delete(fn);
   }
 
+  /**
+   * Samlede point: for hvert niveau i hver udfordring tæller kun pointene fra
+   * det seneste gennemførte forsøg. Et dårligere nyt forsøg kan altså trække summen ned.
+   */
   get totalPoints(): number {
-    return this.state.totalPoints;
+    let sum = 0;
+    for (const c of Object.values(this.state.challenges)) {
+      for (const r of Object.values(c.levels ?? {})) sum += r.lastPoints ?? 0;
+    }
+    return sum;
   }
 
-  /** Spillerens niveau i hele spillet, beregnet ud fra samlede point. */
+  /** Spillerens rang i hele spillet, beregnet ud fra samlede point. */
   get playerLevel(): number {
-    return playerLevelFor(this.state.totalPoints);
+    return playerLevelFor(this.totalPoints);
   }
 
-  addPoints(n: number): void {
-    if (!Number.isFinite(n) || n <= 0) return;
-    this.state.totalPoints += Math.round(n);
-    this.save();
+  /** Point fra seneste gennemførte forsøg på et niveau. */
+  lastPoints(id: string, level: number): number {
+    return this.state.challenges[id]?.levels[level]?.lastPoints ?? 0;
   }
 
   unlockedLevel(id: string): number {
@@ -109,9 +118,17 @@ export class ProgressStore {
   }
 
   /**
-   * Registrér en afsluttet runde. Returnerer true, hvis et nyt niveau blev låst op.
+   * Registrér en afsluttet runde. `points` er de point, runden gav (summen af
+   * addPoints), og de erstatter niveauets tidligere point i den samlede sum.
+   * Returnerer true, hvis et nyt niveau blev låst op.
    */
-  recordResult(id: string, level: number, result: ChallengeResult, maxLevel: number): boolean {
+  recordResult(
+    id: string,
+    level: number,
+    result: ChallengeResult,
+    maxLevel: number,
+    points: number,
+  ): boolean {
     const c = this.challenge(id);
     const passed = result.maxScore > 0 && result.score / result.maxScore >= UNLOCK_THRESHOLD;
     const prev = c.levels[level];
@@ -119,6 +136,7 @@ export class ProgressStore {
       bestScore: Math.max(prev?.bestScore ?? 0, result.score),
       maxScore: result.maxScore,
       completed: (prev?.completed ?? false) || passed,
+      lastPoints: Number.isFinite(points) ? Math.max(0, Math.round(points)) : 0,
     };
     let unlocked = false;
     if (passed && level >= c.unlockedLevel && level < maxLevel) {

@@ -73,7 +73,8 @@ function renderMenu(view: HTMLElement, progress: ProgressStore): void {
   view.innerHTML = `
     <section class="intro">
       <h1>Vælg en udfordring</h1>
-      <p class="muted">Træn digitale færdigheder. Klar mindst ${Math.round(UNLOCK_THRESHOLD * 100)} % af et niveau for at låse det næste op.</p>
+      <p class="muted">Træn digitale færdigheder. Klar mindst ${Math.round(UNLOCK_THRESHOLD * 100)} % af et niveau for at låse det næste op.
+      Kun dit seneste forsøg på hvert niveau tæller i dine samlede point, så pas på, når du prøver igen.</p>
     </section>
     ${[...groups]
       .map(
@@ -128,7 +129,7 @@ function renderLevels(view: HTMLElement, c: Challenge, progress: ProgressStore):
         const rec = progress.levelRecord(c.id, level);
         const open = level <= unlocked;
         const status = rec?.completed ? '✓ Klaret' : open ? 'Åben' : '🔒 Låst';
-        const best = rec ? `Bedste ${rec.bestScore}/${rec.maxScore}` : '';
+        const best = rec ? `Bedste ${rec.bestScore}/${rec.maxScore} · ${rec.lastPoints ?? 0} point` : '';
         return open
           ? `<li><a class="level" href="${href({ name: 'play', id: c.id, level })}"><strong>Niveau ${level}</strong><span>${status}</span><span class="muted">${best}</span></a></li>`
           : `<li><span class="level locked"><strong>Niveau ${level}</strong><span>${status}</span></span></li>`;
@@ -151,24 +152,36 @@ function renderPlay(
   view.innerHTML = `
     <a class="back" href="${href({ name: 'challenge', id: c.id })}">← Niveauer</a>
     <h1>${esc(c.title)} <span class="muted">· niveau ${route.level}</span></h1>
+    <p class="round muted" data-round title="Kun seneste gennemførte forsøg tæller i dine samlede point"></p>
     <div class="stage" data-stage></div>
   `;
   const stage = view.querySelector<HTMLElement>('[data-stage]')!;
   let unmount: (() => void) | null = null;
   let finished = false;
+  // Point i den igangværende runde. De erstatter niveauets tidligere point, når runden
+  // afsluttes. Forlader spilleren runden før tid, tæller den ikke, og de gamle point står.
+  let roundPoints = 0;
+  const previousPoints = progress.lastPoints(c.id, route.level);
+  const roundEl = view.querySelector<HTMLElement>('[data-round]')!;
+  const renderRound = () => {
+    roundEl.textContent = `Denne runde: ${roundPoints} point · sidst: ${previousPoints} point`;
+  };
+  renderRound();
 
   const ctx: ChallengeContext = {
     level: route.level,
     addPoints: (n) => {
-      if (!finished) progress.addPoints(n);
+      if (finished || !Number.isFinite(n) || n <= 0) return;
+      roundPoints += Math.round(n);
+      renderRound();
     },
     finish: (result) => {
       if (finished) return;
       finished = true;
-      const unlockedNew = progress.recordResult(c.id, route.level, result, maxLevel);
+      const unlockedNew = progress.recordResult(c.id, route.level, result, maxLevel, roundPoints);
       unmount?.();
       unmount = null;
-      showResult(stage, c, route.level, maxLevel, result, unlockedNew);
+      showResult(stage, c, route.level, maxLevel, result, unlockedNew, roundPoints, previousPoints);
     },
     exit: () => {
       location.hash = href({ name: 'challenge', id: c.id });
@@ -196,6 +209,8 @@ function showResult(
   maxLevel: number,
   result: ChallengeResult,
   unlockedNew: boolean,
+  points: number,
+  previousPoints: number,
 ): void {
   const pct = result.maxScore > 0 ? Math.round((result.score / result.maxScore) * 100) : 0;
   const passed = pct >= UNLOCK_THRESHOLD * 100;
@@ -205,6 +220,7 @@ function showResult(
       <p class="big">${result.score} / ${result.maxScore}</p>
       <p>${passed ? 'Godt klaret!' : `Du skal have mindst ${Math.round(UNLOCK_THRESHOLD * 100)} % for at klare niveauet.`}</p>
       ${unlockedNew ? `<p><strong>Niveau ${level + 1} er låst op.</strong></p>` : ''}
+      <p class="muted">${pointsChange(points, previousPoints)}</p>
       <div class="actions">
         <a class="btn" href="${href({ name: 'play', id: c.id, level })}" data-retry>Prøv igen</a>
         ${nextLevel ? `<a class="btn primary" href="${href({ name: 'play', id: c.id, level: nextLevel })}">Næste niveau</a>` : ''}
@@ -217,4 +233,10 @@ function showResult(
     e.preventDefault();
     window.dispatchEvent(new HashChangeEvent('hashchange'));
   });
+}
+
+function pointsChange(points: number, previous: number): string {
+  const diff = points - previous;
+  const sign = diff > 0 ? `+${diff}` : `${diff}`;
+  return `Niveauet giver nu ${points} point i din samlede sum (før ${previous}, ${diff === 0 ? 'uændret' : sign}).`;
 }

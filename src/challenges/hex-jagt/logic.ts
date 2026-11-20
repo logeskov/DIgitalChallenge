@@ -1,5 +1,7 @@
 /** Ren logik for Hex-jagt (ingen DOM), så den kan testes. */
 
+import type { UniqueRandom } from '../../core/unique';
+
 export type Base = 'dec' | 'bin' | 'hex';
 
 export const BASE_NAVN: Record<Base, string> = {
@@ -43,7 +45,11 @@ export interface ConversionTask {
 }
 
 /** Sværhedsgrad stiger: først små tal, derefter hele byten. */
-export function makeConversionTask(round: number, rng: Rng = Math.random): ConversionTask {
+export function makeConversionTask(
+  round: number,
+  rng: Rng = Math.random,
+  unique?: UniqueRandom,
+): ConversionTask {
   const pairs: [Base, Base][] = [
     ['hex', 'dec'],
     ['dec', 'hex'],
@@ -54,7 +60,9 @@ export function makeConversionTask(round: number, rng: Rng = Math.random): Conve
   ];
   const [from, to] = pairs[round % pairs.length];
   const max = round < 2 ? 15 : round < 4 ? 63 : 255;
-  return { value: randInt(round < 2 ? 1 : 16, max, rng), from, to };
+  const min = round < 2 ? 1 : 16;
+  // Med en UniqueRandom (én pr. runde) kommer samme tal kun én gang.
+  return { value: unique ? unique.int(min, max) : randInt(min, max, rng), from, to };
 }
 
 /** En kort forklaring der vises når spilleren svarer forkert. */

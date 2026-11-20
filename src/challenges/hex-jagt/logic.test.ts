@@ -72,3 +72,15 @@ describe('farver', () => {
     }
   });
 });
+
+describe('ingen gentagelser i en runde', () => {
+  it('samme tal kommer kun én gang med en fælles UniqueRandom', async () => {
+    const { createUniqueRandom } = await import('../../core/unique');
+    const { makeConversionTask } = await import('./logic');
+    for (let run = 0; run < 100; run++) {
+      const u = createUniqueRandom();
+      const values = Array.from({ length: 6 }, (_, round) => makeConversionTask(round, Math.random, u).value);
+      expect(new Set(values).size).toBe(6);
+    }
+  });
+});

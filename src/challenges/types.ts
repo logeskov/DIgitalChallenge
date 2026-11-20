@@ -16,7 +16,11 @@ export interface ChallengeStorage {
 export interface ChallengeContext {
   /** Valgt niveau, 1-baseret. */
   level: number;
-  /** Giv point undervejs (lægges til spillerens samlede point med det samme). */
+  /**
+   * Giv point undervejs. Rundens point erstatter niveauets point fra sidste forsøg i
+   * spillerens samlede sum, når runden afsluttes med finish. En runde, der forlades
+   * før finish, tæller ikke.
+   */
   addPoints(n: number): void;
   /**
    * Afslut runden. Rammen gemmer bedste resultat for niveauet og låser

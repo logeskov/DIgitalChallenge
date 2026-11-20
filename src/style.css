@@ -87,3 +87,4 @@ a.level:hover { border-color: var(--accent); }
 .result .big { font-size: 2.4rem; font-weight: 700; margin: 0; }
 .actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
 .foot { margin-top: 32px; text-align: center; }
+.round { margin: 0 0 4px; font-size: 0.95rem; }

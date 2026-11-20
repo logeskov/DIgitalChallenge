@@ -1,3 +1,5 @@
+import { createUniqueRandom } from '../../core/unique';
+
 export type Direction = 'bin-to-dec' | 'dec-to-bin';
 
 export interface Level {
@@ -31,10 +33,13 @@ export interface Task {
 
 /** Tilfældigt tal der bruger hele bitbredden nogenlunde jævnt (undgår mest småtal). */
 export function randomValue(bits: number, rnd: () => number = Math.random): number {
-  const max = 2 ** bits - 1;
-  // Mindst 1, og for større bredder lidt over halvdelen af bits i spil.
-  const min = bits <= 4 ? 1 : 2 ** (Math.floor(bits / 2));
+  const [min, max] = valueRange(bits);
   return min + Math.floor(rnd() * (max - min + 1));
+}
+
+/** Mindst 1, og for større bredder lidt over halvdelen af bits i spil. */
+export function valueRange(bits: number): [number, number] {
+  return [bits <= 4 ? 1 : 2 ** Math.floor(bits / 2), 2 ** bits - 1];
 }
 
 export function makeTask(bits: number, rnd: () => number = Math.random): Task {
@@ -46,13 +51,12 @@ export function makeTask(bits: number, rnd: () => number = Math.random): Task {
 }
 
 export function makeRound(bits: number, rnd: () => number = Math.random): Task[] {
+  // Fælles hjælper fra rammen: samme tal kommer kun én gang pr. runde.
+  const numbers = createUniqueRandom(rnd);
+  const [min, max] = valueRange(bits);
   const tasks: Task[] = [];
-  const seen = new Set<number>();
   while (tasks.length < TASKS_PER_ROUND) {
-    const t = makeTask(bits, rnd);
-    if (seen.has(t.value) && seen.size < 2 ** bits - 2) continue;
-    seen.add(t.value);
-    tasks.push(t);
+    tasks.push({ ...makeTask(bits, rnd), value: numbers.int(min, max) });
   }
   // Sørg for at begge retninger er med.
   if (tasks.every((t) => t.direction === tasks[0].direction)) {
