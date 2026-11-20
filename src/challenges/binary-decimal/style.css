@@ -1,0 +1,92 @@
+.bd {
+  --bd-bg: #ffffff;
+  --bd-fg: #1d2330;
+  --bd-muted: #5b6475;
+  --bd-line: #d5dae3;
+  --bd-accent: #2f6fde;
+  --bd-on: #2f6fde;
+  --bd-on-fg: #ffffff;
+  --bd-off: #eef1f6;
+  --bd-ok: #1f8a4c;
+  --bd-ok-bg: #e6f5ec;
+  --bd-bad: #b3261e;
+  --bd-bad-bg: #fbe9e7;
+  --bd-warn-bg: #fff4d6;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+  color: var(--bd-fg);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+}
+@media (prefers-color-scheme: dark) {
+  .bd {
+    --bd-bg: #161a22;
+    --bd-fg: #e7eaf0;
+    --bd-muted: #9aa3b5;
+    --bd-line: #2f3644;
+    --bd-accent: #6d9cff;
+    --bd-on: #4f86f7;
+    --bd-off: #232936;
+    --bd-ok: #5fd08f;
+    --bd-ok-bg: #173324;
+    --bd-bad: #ff8a80;
+    --bd-bad-bg: #3a1c1a;
+    --bd-warn-bg: #3a3218;
+  }
+}
+.bd-level { margin: 0 0 12px; color: var(--bd-accent); font-weight: 600; }
+.bd-hint { color: var(--bd-muted); }
+.bd-header {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px;
+  font-size: .9rem; color: var(--bd-muted); margin-bottom: 8px;
+}
+.bd-timer { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.bd-timebar { flex: 1; height: 10px; background: var(--bd-off); border-radius: 5px; overflow: hidden; }
+.bd-timefill { height: 100%; background: var(--bd-accent); transition: width .1s linear; }
+.bd-timefill.low { background: var(--bd-bad); }
+.bd-timetext { min-width: 3.5em; text-align: right; font-variant-numeric: tabular-nums; }
+.bd-question { font-size: 1.15rem; margin: 0 0 12px; }
+.bd-big { font-size: 2.6rem; font-weight: 700; margin: 4px 0 16px; font-variant-numeric: tabular-nums; }
+.bd-bits { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.bd-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.bd-nibble-end { margin-right: 10px; }
+.bd-weight { font-size: .75rem; color: var(--bd-muted); font-variant-numeric: tabular-nums; }
+.bd-bit {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 56px; border-radius: 8px;
+  border: 2px solid var(--bd-line); background: var(--bd-off); color: var(--bd-fg);
+  font: 700 1.5rem ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+button.bd-bit { cursor: pointer; transition: transform .08s, background .12s; }
+button.bd-bit:hover:not(:disabled) { border-color: var(--bd-accent); }
+button.bd-bit:active:not(:disabled) { transform: scale(.94); }
+.bd-bit.on { background: var(--bd-on); border-color: var(--bd-on); color: var(--bd-on-fg); }
+.bd-bits-16 .bd-bit { width: 34px; height: 44px; font-size: 1.15rem; }
+.bd-sum { color: var(--bd-muted); margin: 0 0 12px; }
+.bd-form { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 16px; }
+.bd-input {
+  flex: 1 1 180px; min-width: 0; padding: 10px 12px; font-size: 1.2rem;
+  border: 2px solid var(--bd-line); border-radius: 8px; background: var(--bd-bg); color: var(--bd-fg);
+}
+.bd-input-bin { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; letter-spacing: .05em; }
+.bd-input:focus { outline: none; border-color: var(--bd-accent); }
+.bd-btn {
+  padding: 10px 18px; font-size: 1rem; border-radius: 8px; cursor: pointer;
+  border: 2px solid var(--bd-line); background: var(--bd-bg); color: var(--bd-fg);
+}
+.bd-btn:disabled { opacity: .5; cursor: default; }
+.bd-primary { background: var(--bd-accent); border-color: var(--bd-accent); color: #fff; }
+.bd-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.bd-feedback:empty { display: none; }
+.bd-feedback { padding: 12px 14px; border-radius: 8px; }
+.bd-feedback.ok { background: var(--bd-ok-bg); color: var(--bd-ok); }
+.bd-feedback.bad { background: var(--bd-bad-bg); color: var(--bd-bad); }
+.bd-feedback.warn { background: var(--bd-warn-bg); }
+.bd-feedback div { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; color: var(--bd-fg); margin-top: 4px; }
+.bd-feedback .bd-actions { font-family: inherit; }
+@media (max-width: 480px) {
+  .bd-bit { width: 40px; height: 48px; }
+  .bd-bits-8 .bd-nibble-end, .bd-bits-16 .bd-nibble-end { margin-right: 6px; }
+  .bd-bits-16 .bd-bit { width: 30px; height: 40px; font-size: 1rem; }
+}
