@@ -66,7 +66,14 @@ function mount(container: HTMLElement, ctx: ChallengeContext): () => void {
 
   function bitRow(values: boolean[], clickable: boolean, onChange?: () => void): HTMLElement {
     const row = el('div', { className: `bd-bits bd-bits-${level.bits}` });
+    // Bits samles i grupper af fire, der aldrig brydes, så en smal skærm
+    // deler 8 bit som 4 + 4 og 16 bit som 4 + 4 + 4 + 4 (eller 8 + 8).
+    let group: HTMLElement | null = null;
     values.forEach((on, i) => {
+      if (i % 4 === 0) {
+        group = el('div', { className: 'bd-nibble' });
+        row.append(group);
+      }
       const weight = 2 ** (values.length - 1 - i);
       const cell = el('div', { className: 'bd-cell' });
       if (level.showPlaceValues) cell.append(el('span', { className: 'bd-weight' }, String(weight)));
@@ -85,9 +92,7 @@ function mount(container: HTMLElement, ctx: ChallengeContext): () => void {
         };
       }
       cell.append(bit);
-      // Lidt luft mellem hver nibble.
-      if (i % 4 === 3 && i !== values.length - 1) cell.classList.add('bd-nibble-end');
-      row.append(cell);
+      group!.append(cell);
     });
     return row;
   }

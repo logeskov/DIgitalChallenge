@@ -48,9 +48,9 @@
 .bd-timetext { min-width: 3.5em; text-align: right; font-variant-numeric: tabular-nums; }
 .bd-question { font-size: 1.15rem; margin: 0 0 12px; }
 .bd-big { font-size: 2.6rem; font-weight: 700; margin: 4px 0 16px; font-variant-numeric: tabular-nums; }
-.bd-bits { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.bd-bits { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 12px; }
+.bd-nibble { display: flex; gap: 6px; }
 .bd-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.bd-nibble-end { margin-right: 10px; }
 .bd-weight { font-size: .75rem; color: var(--bd-muted); font-variant-numeric: tabular-nums; }
 .bd-bit {
   display: inline-flex; align-items: center; justify-content: center;
@@ -87,6 +87,6 @@ button.bd-bit:active:not(:disabled) { transform: scale(.94); }
 .bd-feedback .bd-actions { font-family: inherit; }
 @media (max-width: 480px) {
   .bd-bit { width: 40px; height: 48px; }
-  .bd-bits-8 .bd-nibble-end, .bd-bits-16 .bd-nibble-end { margin-right: 6px; }
+  .bd-bits { column-gap: 12px; }
   .bd-bits-16 .bd-bit { width: 30px; height: 40px; font-size: 1rem; }
 }
