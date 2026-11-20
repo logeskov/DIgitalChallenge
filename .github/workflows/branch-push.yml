@@ -1,0 +1,15 @@
+# Lille hjælpe-workflow: kører når der skubbes til en anden branch end main,
+# så "Udgiv på GitHub Pages" bagefter bygger nye forhåndsvisninger.
+# (GitHub Pages må kun udgives fra main, derfor denne omvej.)
+name: Branch opdateret
+
+on:
+  push:
+    branches-ignore: [main]
+  delete:
+
+jobs:
+  signal:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Branch ændret – udgivelsen bygger forhåndsvisninger igen."
