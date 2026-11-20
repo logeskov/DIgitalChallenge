@@ -1,0 +1,75 @@
+.bi {
+  --bi-on: var(--accent);
+  --bi-off: color-mix(in srgb, var(--border) 45%, var(--surface));
+  --bi-ok-bg: color-mix(in srgb, var(--good) 14%, var(--surface));
+  --bi-bad-bg: color-mix(in srgb, var(--bad) 14%, var(--surface));
+  --bi-warn-bg: color-mix(in srgb, #e0a800 18%, var(--surface));
+  max-width: 680px;
+  margin: 0 auto;
+}
+.bi-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
+.bi-lesson { font-weight: 600; color: var(--accent); }
+.bi-steps { display: flex; gap: 5px; flex-wrap: wrap; }
+.bi-steps i { width: 10px; height: 10px; background: var(--border); }
+.bi-steps i.info { border-radius: 2px; }
+.bi-steps i.ex { border-radius: 50%; }
+.bi-steps i.done { background: var(--good); }
+.bi-steps i.now { background: var(--accent); outline: 2px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset: 1px; }
+.bi-info h2 { margin: 0 0 8px; font-size: 1.35rem; }
+.bi-text p { margin: 0 0 10px; }
+.bi-text code, .bi-mono { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; }
+.bi-text code { padding: 1px 5px; border-radius: 4px; background: var(--bi-off); }
+.bi-demo { margin: 12px 0 4px; padding: 14px; border: 1px dashed var(--border); border-radius: 10px; }
+.bi-muted { color: var(--muted); margin: 6px 0 0; }
+.bi-kicker { margin: 0 0 4px; font-size: .9rem; color: var(--muted); }
+.bi-question { font-size: 1.2rem; margin: 0 0 12px; }
+.bi-big { font-size: 2.4rem; font-weight: 700; margin: 4px 0 14px; font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+.bi-bits { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+.bi-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.bi-weight { font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bi-bit {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 56px; border-radius: 8px;
+  border: 2px solid var(--border); background: var(--bi-off); color: var(--text);
+  font: 700 1.5rem ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+button.bi-bit { cursor: pointer; transition: transform .08s, background .12s; }
+button.bi-bit:hover:not(:disabled) { border-color: var(--accent); }
+button.bi-bit:active:not(:disabled) { transform: scale(.94); }
+button.bi-bit:disabled { cursor: default; }
+.bi-bit.on { background: var(--bi-on); border-color: var(--bi-on); color: var(--accent-text); }
+.bi-bit.mark { border-color: #e0a800; box-shadow: 0 0 0 3px color-mix(in srgb, #e0a800 40%, transparent); }
+.bi-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 4px; }
+.bi-option {
+  font: inherit; font-size: 1.2rem; padding: 12px; border-radius: 8px; cursor: pointer;
+  border: 2px solid var(--border); background: var(--surface); color: var(--text);
+}
+.bi-option:hover:not(:disabled) { border-color: var(--accent); }
+.bi-option.picked { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
+.bi-option.right { border-color: var(--good); background: var(--bi-ok-bg); }
+.bi-option.wrong { border-color: var(--bad); background: var(--bi-bad-bg); }
+.bi-option:disabled { cursor: default; }
+.bi-form { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
+.bi-input {
+  flex: 1 1 160px; min-width: 0; padding: 10px 12px; font-size: 1.2rem;
+  border: 2px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text);
+}
+.bi-input:focus { outline: none; border-color: var(--accent); }
+.bi-btn {
+  font: inherit; padding: 10px 18px; border-radius: 8px; cursor: pointer;
+  border: 2px solid var(--border); background: var(--surface); color: var(--text);
+}
+.bi-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.bi-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.bi-feedback:empty { display: none; }
+.bi-feedback { padding: 12px 14px; border-radius: 8px; }
+.bi-feedback.ok { background: var(--bi-ok-bg); }
+.bi-feedback.ok strong { color: var(--good); }
+.bi-feedback.bad { background: var(--bi-bad-bg); }
+.bi-feedback.bad strong { color: var(--bad); }
+.bi-feedback.warn { background: var(--bi-warn-bg); }
+.bi-feedback > div:not(.bi-actions) { margin-top: 4px; }
+@media (max-width: 480px) {
+  .bi-bit { width: 40px; height: 48px; font-size: 1.3rem; }
+  .bi-big { font-size: 2rem; }
+}
