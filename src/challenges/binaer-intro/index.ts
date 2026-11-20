@@ -5,7 +5,7 @@ import {
 } from './logic';
 import './style.css';
 
-function el<K extends keyof HTMLElementTagNameMap>(
+export function el<K extends keyof HTMLElementTagNameMap>(
   tag: K, props: Partial<HTMLElementTagNameMap[K]> & { className?: string } = {}, ...children: (Node | string)[]
 ): HTMLElementTagNameMap[K] {
   const node = document.createElement(tag);
@@ -31,7 +31,7 @@ function bitView(view: BitView): HTMLElement {
 }
 
 /** Klikbare bits. Returnerer rækken og en funktion, der læser værdien. */
-function clickableBits(
+export function clickableBits(
   size: number, showWeights: boolean, onChange?: (value: number) => void,
 ): { row: HTMLElement; value: () => number; disable: () => void } {
   const values = new Array<boolean>(size).fill(false);
